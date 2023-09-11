@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.1, maximum-scale=0.75, user-scalable=yes"> -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>당구점수판</title>
+</head>
+<script>
+  window.addEventListener('beforeunload', (event) => {
+    // 표준에 따라 기본 동작 방지
+    event.preventDefault();
+    // Chrome에서는 returnValue 설정이 필요함
+    event.returnValue = '';
+  });
+
+  // //뒤로가기 막기
+  // history.pushState(null, null, location.href);
+  // window.onpopstate = function(event){
+  //   history.go(1);
+  // }
+  // window.history.forward(); 
+  // function noBack(){
+  //   window.history.forward();
+  // }
+  // // window.addEventListener("load", function(){    
+  // // setTimeout(scrollTo, 0, 0, 1); 
+  // 모바일 웹 주소창 숨기기
+  // window.addEventListener('load',function(){
+  //   setTimeout(scrollTo,0,0,1);
+  //   },false);
+  // window.addEventListener('load', function() {
+  // // body의 height를 살짝 늘리는 코드
+  // document.body.style.height = (document.documentElement.clientHeight + 5) + 'px';
+  // // scroll를 제어 하는 코드
+  // setTimeout(scrollTo, 0, 0, 1);}, false);    
+  const data = JSON.parse(localStorage.getItem("key"));         //setItem("key", JSON.stringify(data));
+  console.log(data);
+
+</script>
+<style>
+  @media( orientation: portrait ){
+    html {
+      transform: rotate(-90deg);
+      transform-origin: top left;
+      position: absolute;
+      top: 105%;
+      left: 0%;
+      width: 100vh;
+      height: 100vw;
+    }
+  }
+  @import url(http://fonts.googleapis.com/earlyaccess/nanumgothic.css);
+  body {
+    background-color: #333333;  /*rgb(51, 49, 49);*/
+    font-family: 'Nanum Gothic';
+    -webkit-user-select: none; /* Safari */
+    user-select: none;
+    margin: 0 ;
+  }
+  .grid-container {
+    display: grid;
+    justify-content: center;
+    grid-template-columns: 115px 115px 115px 115px 115px ; 
+    /* grid-template-columns: 19% 19% 19% 19% 19% ; Make the grid smaller than the container */
+    gap: 5px;
+    /* background-color: black; */
+    /* padding: 5px; */
+    /* width: 100vw;
+    height: 100vh; */
+  }
+  .grid-container > div {
+    /* background-color: rgba(255, 255, 255, 0.3); */
+    text-align: center;
+    /* padding: 10px ; */
+    /* color: white; */
+    /* font-size: 20px; */
+    position: relative;
+  }
+  .board1 {
+    grid-column: 1 / 3;
+    grid-row: 1 / 4;
+    padding: 5px ;
+    /* margin-bottom: 10px; */
+    /* height: 50vh;
+    min-height: 240px; */
+  }
+  .board2 {
+    grid-column: 4 / 6;
+    grid-row: 1 / 4;
+    padding: 5px ;
+    /* margin-bottom: 10px; */
+    /* height: 50vh;
+    min-height: 240px; */
+  }
+  .time {
+    font-size: 22px;
+    /* height: 10%; */
+    color: greenyellow;
+    padding: 10px ;
+    white-space: pre-wrap;
+  }
+  .inning {
+    color:orange;
+    font-size: 28px;
+    /* height: 10%; */
+  }
+  .run {
+    font-size: 85px;
+    display: inline-block;
+    /* position: absolute; */
+    /* top: 10%; */
+    text-align: center;
+    font-weight: bold;
+    /*border-width: thick;
+    border-style: solid;
+    border-color: #0066ff;*/
+    border-radius: 50%;
+    background-color: white;
+    color: #0099ff;
+    /* height: 100vh; */
+    /* line-height: 100vh; */
+    width: 110px; 
+    height: 110px;
+    /* line-height: 110px; */
+    /* margin-bottom: 10px; */
+    /* padding: 0px 0 0px 0px; */
+  }
+  .timer {
+    display: grid;
+    justify-content: center;
+    grid-template-columns: 210px 305px 80px; /*Make the grid smaller than the container*/
+    /* gap: 5px; */
+  }
+  .timer > div {
+    /* background-color: rgba(255, 255, 255, 0.3); */
+    text-align: center;
+    padding: 5px ;
+    /* gap: 40px; */
+    /* color: white; */
+    /* font-size: 20px; */
+    position: relative;
+  }
+  .buttons {
+    grid-column: 1 / 2;
+    /* height: 40%; */
+    /* color: white; */
+    /* padding: 0px; 20px 0 0; */
+    /* gap: 20px; */
+    /* margin-top: -5px; */
+  }
+
+  .scoreboard1, .scoreboard2 {
+    display: grid;
+    justify-content: center;
+    grid-template-columns: 40% 15% 15% 30%; /*Make the grid smaller than the container*/
+    background-color: white;
+    padding: 7px;
+    /* gap: 2px; */
+    color: black;
+    border-width: 8px ;
+    border-style: solid;
+    border-color: red;
+    border-radius: 5%;
+    /* height: 240px; */
+    cursor: pointer;
+  }
+  .scoreboard2 {
+    background-color: yellow;
+    /* border-width: 0 ; */
+    border-color: yellow;
+  }
+  .scoreboard1 > div {
+    /* background-color: rgba(111, 111, 111, 0.3); */
+    height: auto;
+  }
+  .player {
+    grid-row: 1 / 3;
+    grid-column: 1 / 2;
+    font-size: 22px ;
+    font-weight: bold;
+    text-align: left;
+    padding: 10px 0px 0 0;
+  }
+  .time1, .time2 {
+    grid-row: 1 / 3;
+    /* grid-column: 1 / 2; */
+    font-size: 20px ;
+    /* color: red; */
+    /* font-weight: bold; */
+    /* text-align: left; */
+    padding: 10px 0px 0 0;
+  }
+  .target {
+    grid-column: 4 / 5;
+    font-size: 20px ;
+    text-align: right;
+    font-weight: bold;
+    color: green;
+    /* margin-bottom: -30px; */
+  }
+  .remain {
+    grid-column: 4 / 5;
+    font-size: 22px ;
+    text-align: right;
+    color: rgb(216, 70, 2);
+    font-weight: bold;
+    /* margin-top: 5px; */
+    /* margin-bottom: -30px; */
+  }
+  .score {
+    grid-column: 1 / 5;
+    font-size: 100px ;
+    /* padding: 5px; */
+    font-weight: bold;
+    text-align: center;
+    /* margin-top: -35px;
+    margin-bottom: -25px; */
+  }
+  .hrun {
+    grid-column: 1 / 2;
+    font-size: 20px ;
+    font-weight: bold;
+    text-align: left;
+    color: olivedrab;
+  }
+  .avg {
+    grid-column: 2 / 5;
+    font-size: 20px ;
+    font-weight: bold;
+    text-align: right;
+    color: rgb(96, 79, 192);
+  }
+  .button {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    /* padding: 12px 16px; */
+    /* margin-left: 10px; */
+    text-align: center;
+    text-decoration: none;
+    /* display: inline-block; */
+    font-weight: bolder;
+    transition-duration: 0.4s;
+    cursor: pointer;
+    float: left;
+  }
+  .button:disabled {
+    background-color: gray;
+    color: black;
+  }
+  .btnplus {
+    background-color: #4CAF50;
+    color: white;
+    border: 2px solid #4CAF50;
+    display: none;
+  }
+  /* .btnplus:hover {
+    background-color: #4CAF50;
+    color: white;
+  } */
+  .btnminus {
+    font-size: 30px;
+    font-weight: bold;
+    background-color: #f44336;
+    color: white;
+    width: 80px;
+    height: 80px;
+    border: 4px solid #f44336;
+    border-radius: 50%;
+    margin: 0px 5px;
+    /* float: left;  */
+  }
+  /* .btnminus:hover {
+    background-color: #f44336;
+    color: white;
+  } */
+  /* .bspace {
+    display: inline;
+  } */
+  .btntime {
+    font-size: 30px;
+    background-color:gray;
+    color: white;
+    width: 80px;
+    height: 80px;
+    border: 4px solid #f7efee;
+    border-radius: 50%;
+    margin: 0px 0px 0 20px;
+    /* float: left; */
+  }
+  .btnturn {
+    background-color: #008CBA;
+    color: white;
+    border: 2px solid #008CBA;
+    display: none;
+  }
+  /* .btnturn:hover {
+    background-color: #008CBA;
+    color: white;
+  } */
+  .btnend {
+    background-color: #555555;
+    color: white;
+    border: 2px solid #555555;
+  }
+  /* .btnend:hover {
+    background-color: #555555;
+    color: white;
+  } */
+  .progress-bar {
+    width: 100%;
+    height: 35%;
+    background-color: black; /*#f2f2f2;*/
+    border-color: gray;
+    /* padding: 50px; */
+    margin-top: 21px;
+    position: relative;
+    /* float: left;  */
+    display: inline-block;
+    border-radius: 50px 0 0 50px; /*5%;*/
+  }
+  .progress {
+    width: 100%;
+    height: 100%;
+    background-color: #0099ff;
+    position: absolute;
+    top: 0;
+    left: 0;
+    /* float: left;  */
+    display: inline-block;
+    border-radius: 50px 0 0 50px; /*5%;*/
+    /* border-radius: 5%; */
+  }
+  .countdown {
+    /* display: inline-block; */
+    color: white;
+    position: relative;
+    font-size: 28px;
+    font-weight: bold;
+    /* float: left;  */
+  }
+  /* .stopbtn {
+    font-size: 20px;
+  } */
+  .btnstop {
+    position: relative;
+    background-color: rgb(64, 217, 228); /* Green */
+    border: none;
+    color: black;
+    /* padding: 6px 0px 5px; */
+    width: 80px;
+    height: 80px;
+    margin-left: -17px;
+    text-align: center;
+    /* text-decoration: none; */
+    /* display: inline-block; */
+    font-size: 26px;
+    font-weight: bolder;
+    /* margin: 0px 0px; */
+    /* transition-duration: 0.4s; */
+    border-radius: 50%;
+    float: left;
+    cursor: pointer;
+  }
+  .balloon {  
+    position:absolute; 
+    margin: -40px -90px;
+    padding: 5px;
+    width:150px; 
+    height:50px;
+    background:pink; 
+    border-radius: 10px;
+    font-size: 20px;
+    /* border-style: solid; *
+    /* border-color:black; */
+  }
+  .balloon:after { 
+    border-style: solid;
+    border-color:black;
+    border-top:10px solid pink; 
+    border-left: 10px solid transparent; 
+    border-right: 10px solid transparent; 
+    border-bottom: 2px solid transparent; 
+    content:""; 
+    position:absolute;
+    top:60px;
+    left:100px;  
+  }
+</style>
+<body>
+  <div class="grid-container">
+    <div class="board1">
+      <div class="scoreboard1">
+        <div class="player" id="player1"></div>
+        <div class="time1"  id="time11">🕛</div>
+        <div class="time2"  id="time12">🕛</div>
+        <div class="target" id="target1"></div>
+        <div class="remain" id="remain1"></div>
+        <div class="score"  id="score1">0</div>
+        <div class="hrun"   id="hrun1">HR 0</div>
+        <div class="avg"    id="avg1">Avg 0.00</div>
+      </div>
+    </div>
+    <div class="time">0 Min<br>0 Sec</div>
+    <div class="inning">0 Inn</div>
+    <div class="runbox">
+      <button class="run">0</button>
+    </div>
+    <div class="board2">
+      <div class="scoreboard2">
+        <div class="player" id="player2"></div>
+        <div class="time1"  id="time21">🕛</div>
+        <div class="time2"  id="time22">🕛</div>
+        <div class="target" id="target2"></div>
+        <div class="remain" id="remain2"></div>
+        <div class="score"  id="score2">0</div>
+        <div class="hrun"   id="hrun2">HR 0</div>
+        <div class="avg"    id="avg2">Avg 0.00</div>
+      </div>
+    </div>
+  </div>
+  <div class="timer">
+    <div class="buttons">
+      <button class="button btnminus">-1</button>
+      <button class="button btntime">T/O</button>
+    </div>
+    <div class="progress-bar">
+      <div class="progress"></div>
+      <div class="countdown"></div>
+    </div>
+    <div class="stopbtn">
+      <button class="btnstop">▶</button>
+      <div class="balloon" id="balloon">버튼을 클릭하여 시작하세요</div>
+    </div>
+  </div>
+  <div>
+    <button class="button btnplus">+1</button>
+    <button class="button btnturn">Turn</button>
+    <!-- <button class="button btnend">End</button> -->
+  </div>
+</body>
+<script>
+  let   isStarted     = false;
+  let   isPlayer1     = true;
+  let   isTimeout     = false
+  let   timerId;
+  let   timerId2;
+  let   totalLaptime  = 0;
+  let   innings       = 1;
+  let   ihrun1        = 0;
+  let   ihrun2        = 0;
+  // console.log(data.limit);
+  const availTime     = data.limit;
+  const time          = document.querySelector(".time");
+  const inning        = document.querySelector(".inning");
+  const scoreboard1   = document.querySelector(".scoreboard1");
+  const scoreboard2   = document.querySelector(".scoreboard2");
+  const player1       = document.querySelector("#player1");
+  const player2       = document.querySelector("#player2");
+  const score1        = document.querySelector("#score1");
+  const score2        = document.querySelector("#score2");
+  const target1       = document.querySelector("#target1");
+  const target2       = document.querySelector("#target2");
+  const remain1       = document.querySelector("#remain1");
+  const remain2       = document.querySelector("#remain2");
+  const hrun1         = document.querySelector("#hrun1");
+  const hrun2         = document.querySelector("#hrun2");
+  const avg1          = document.querySelector("#avg1");
+  const avg2          = document.querySelector("#avg2");
+  const run           = document.querySelector(".run");
+  const countdownEl   = document.querySelector(".countdown");
+  const progressBarEl = document.querySelector(".progress");
+  const btnplus       = document.querySelector(".btnplus")
+  const btnminus      = document.querySelector(".btnminus")
+  const btntime       = document.querySelector(".btntime")
+  const btnturn       = document.querySelector(".btnturn")
+  const btnend        = document.querySelector(".btnend")
+  const btnstop       = document.querySelector(".btnstop")
+
+  buttondisable(true);
+
+  player1.textContent = data.player1;
+  player2.textContent = data.player2
+  target1.textContent = data.target1;
+  target2.textContent = data.target2;
+  remain1.textContent = `잔 ${String(parseInt(target1.textContent))}`
+  remain2.textContent = `잔 ${String(parseInt(target2.textContent))}`
+
+  function getData(){
+    // const Url = window.location.hostname === "localhost"  ? 'http//58.141.18.228:8081'  : "api";
+    const Url = 'http://58.141.18.228:8081/'; //''https://jsonplaceholder.typicode.com/users;
+
+    fetch(Url)
+          .then(response => response.json())
+          .then(data => {player1.textContent = (data[0].name);
+                         display(data[0].NICNAME);
+                        })
+          .catch(error => console.log(error));
+  }
+
+  function display(data){
+    alert("aaa");
+  }
+  getData();
+
+  btnplus.addEventListener('click',plus);
+  btnminus.addEventListener('click',minus);
+  btntime.addEventListener('click',timeout);
+  btnturn.addEventListener('click',turn);
+  scoreboard1.addEventListener('click',turn1);
+  scoreboard2.addEventListener('click',turn2);
+  // btnend.addEventListener('click',end);
+  btnstop.addEventListener('click',stop);
+
+  function buttondisable(b) {
+    btnplus.disabled    = b;
+    btnminus.disabled   = b;
+    btntime.disabled    = b;
+    btnturn.disabled    = b;
+    // btnend.disabled     = b;
+  }
+  
+
+  function beep() { 
+    var snd = new Audio("data:audio/wav;base64,//uQRAAAAWMSLwUIYAAsYkXgoQwAEaYLWfkWgAI0wWs/ItAAAGDgYtAgAyN+QWaAAihwMWm4G8QQRDiMcCBcH3Cc+CDv/7xA4Tvh9Rz/y8QADBwMWgQAZG/ILNAARQ4GLTcDeIIIhxGOBAuD7hOfBB3/94gcJ3w+o5/5eIAIAAAVwWgQAVQ2ORaIQwEMAJiDg95G4nQL7mQVWI6GwRcfsZAcsKkJvxgxEjzFUgfHoSQ9Qq7KNwqHwuB13MA4a1q/DmBrHgPcmjiGoh//EwC5nGPEmS4RcfkVKOhJf+WOgoxJclFz3kgn//dBA+ya1GhurNn8zb//9NNutNuhz31f////9vt///z+IdAEAAAK4LQIAKobHItEIYCGAExBwe8jcToF9zIKrEdDYIuP2MgOWFSE34wYiR5iqQPj0JIeoVdlG4VD4XA67mAcNa1fhzA1jwHuTRxDUQ//iYBczjHiTJcIuPyKlHQkv/LHQUYkuSi57yQT//uggfZNajQ3Vmz+Zt//+mm3Wm3Q576v////+32///5/EOgAAADVghQAAAAA//uQZAUAB1WI0PZugAAAAAoQwAAAEk3nRd2qAAAAACiDgAAAAAAABCqEEQRLCgwpBGMlJkIz8jKhGvj4k6jzRnqasNKIeoh5gI7BJaC1A1AoNBjJgbyApVS4IDlZgDU5WUAxEKDNmmALHzZp0Fkz1FMTmGFl1FMEyodIavcCAUHDWrKAIA4aa2oCgILEBupZgHvAhEBcZ6joQBxS76AgccrFlczBvKLC0QI2cBoCFvfTDAo7eoOQInqDPBtvrDEZBNYN5xwNwxQRfw8ZQ5wQVLvO8OYU+mHvFLlDh05Mdg7BT6YrRPpCBznMB2r//xKJjyyOh+cImr2/4doscwD6neZjuZR4AgAABYAAAABy1xcdQtxYBYYZdifkUDgzzXaXn98Z0oi9ILU5mBjFANmRwlVJ3/6jYDAmxaiDG3/6xjQQCCKkRb/6kg/wW+kSJ5//rLobkLSiKmqP/0ikJuDaSaSf/6JiLYLEYnW/+kXg1WRVJL/9EmQ1YZIsv/6Qzwy5qk7/+tEU0nkls3/zIUMPKNX/6yZLf+kFgAfgGyLFAUwY//uQZAUABcd5UiNPVXAAAApAAAAAE0VZQKw9ISAAACgAAAAAVQIygIElVrFkBS+Jhi+EAuu+lKAkYUEIsmEAEoMeDmCETMvfSHTGkF5RWH7kz/ESHWPAq/kcCRhqBtMdokPdM7vil7RG98A2sc7zO6ZvTdM7pmOUAZTnJW+NXxqmd41dqJ6mLTXxrPpnV8avaIf5SvL7pndPvPpndJR9Kuu8fePvuiuhorgWjp7Mf/PRjxcFCPDkW31srioCExivv9lcwKEaHsf/7ow2Fl1T/9RkXgEhYElAoCLFtMArxwivDJJ+bR1HTKJdlEoTELCIqgEwVGSQ+hIm0NbK8WXcTEI0UPoa2NbG4y2K00JEWbZavJXkYaqo9CRHS55FcZTjKEk3NKoCYUnSQ0rWxrZbFKbKIhOKPZe1cJKzZSaQrIyULHDZmV5K4xySsDRKWOruanGtjLJXFEmwaIbDLX0hIPBUQPVFVkQkDoUNfSoDgQGKPekoxeGzA4DUvnn4bxzcZrtJyipKfPNy5w+9lnXwgqsiyHNeSVpemw4bWb9psYeq//uQZBoABQt4yMVxYAIAAAkQoAAAHvYpL5m6AAgAACXDAAAAD59jblTirQe9upFsmZbpMudy7Lz1X1DYsxOOSWpfPqNX2WqktK0DMvuGwlbNj44TleLPQ+Gsfb+GOWOKJoIrWb3cIMeeON6lz2umTqMXV8Mj30yWPpjoSa9ujK8SyeJP5y5mOW1D6hvLepeveEAEDo0mgCRClOEgANv3B9a6fikgUSu/DmAMATrGx7nng5p5iimPNZsfQLYB2sDLIkzRKZOHGAaUyDcpFBSLG9MCQALgAIgQs2YunOszLSAyQYPVC2YdGGeHD2dTdJk1pAHGAWDjnkcLKFymS3RQZTInzySoBwMG0QueC3gMsCEYxUqlrcxK6k1LQQcsmyYeQPdC2YfuGPASCBkcVMQQqpVJshui1tkXQJQV0OXGAZMXSOEEBRirXbVRQW7ugq7IM7rPWSZyDlM3IuNEkxzCOJ0ny2ThNkyRai1b6ev//3dzNGzNb//4uAvHT5sURcZCFcuKLhOFs8mLAAEAt4UWAAIABAAAAAB4qbHo0tIjVkUU//uQZAwABfSFz3ZqQAAAAAngwAAAE1HjMp2qAAAAACZDgAAAD5UkTE1UgZEUExqYynN1qZvqIOREEFmBcJQkwdxiFtw0qEOkGYfRDifBui9MQg4QAHAqWtAWHoCxu1Yf4VfWLPIM2mHDFsbQEVGwyqQoQcwnfHeIkNt9YnkiaS1oizycqJrx4KOQjahZxWbcZgztj2c49nKmkId44S71j0c8eV9yDK6uPRzx5X18eDvjvQ6yKo9ZSS6l//8elePK/Lf//IInrOF/FvDoADYAGBMGb7FtErm5MXMlmPAJQVgWta7Zx2go+8xJ0UiCb8LHHdftWyLJE0QIAIsI+UbXu67dZMjmgDGCGl1H+vpF4NSDckSIkk7Vd+sxEhBQMRU8j/12UIRhzSaUdQ+rQU5kGeFxm+hb1oh6pWWmv3uvmReDl0UnvtapVaIzo1jZbf/pD6ElLqSX+rUmOQNpJFa/r+sa4e/pBlAABoAAAAA3CUgShLdGIxsY7AUABPRrgCABdDuQ5GC7DqPQCgbbJUAoRSUj+NIEig0YfyWUho1VBBBA//uQZB4ABZx5zfMakeAAAAmwAAAAF5F3P0w9GtAAACfAAAAAwLhMDmAYWMgVEG1U0FIGCBgXBXAtfMH10000EEEEEECUBYln03TTTdNBDZopopYvrTTdNa325mImNg3TTPV9q3pmY0xoO6bv3r00y+IDGid/9aaaZTGMuj9mpu9Mpio1dXrr5HERTZSmqU36A3CumzN/9Robv/Xx4v9ijkSRSNLQhAWumap82WRSBUqXStV/YcS+XVLnSS+WLDroqArFkMEsAS+eWmrUzrO0oEmE40RlMZ5+ODIkAyKAGUwZ3mVKmcamcJnMW26MRPgUw6j+LkhyHGVGYjSUUKNpuJUQoOIAyDvEyG8S5yfK6dhZc0Tx1KI/gviKL6qvvFs1+bWtaz58uUNnryq6kt5RzOCkPWlVqVX2a/EEBUdU1KrXLf40GoiiFXK///qpoiDXrOgqDR38JB0bw7SoL+ZB9o1RCkQjQ2CBYZKd/+VJxZRRZlqSkKiws0WFxUyCwsKiMy7hUVFhIaCrNQsKkTIsLivwKKigsj8XYlwt/WKi2N4d//uQRCSAAjURNIHpMZBGYiaQPSYyAAABLAAAAAAAACWAAAAApUF/Mg+0aohSIRobBAsMlO//Kk4soosy1JSFRYWaLC4qZBYWFRGZdwqKiwkNBVmoWFSJkWFxX4FFRQWR+LsS4W/rFRb/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////VEFHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAU291bmRib3kuZGUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjAwNGh0dHA6Ly93d3cuc291bmRib3kuZGUAAAAAAAAAACU=");
+    snd.play(); 
+  } 
+
+  const start     = new Audio('./audio/start.mp3');
+  const success   = new Audio('./audio/success.mp3');
+  const fail      = new Audio('./audio/fail.mp3');
+  const timeouts  = new Audio('./audio/timeout.mp3');
+  const turnover  = new Audio('./audio/turn.mp3');
+  const timeover  = new Audio('./audio/timeover.mp3');
+  const fine      = new Audio('./audio/fine.mp3');
+
+  function soundStart(){
+    start.play();
+  }
+  function soundSuccess(){
+    success.play();
+  }
+  function soundFail(){
+    fail.play();
+  }
+  function soundTimeout(){
+    timeouts.play();
+  }
+  function soundTurn(){
+    turnover.play();
+  }
+  function soundTimeover(){
+    timeover.play();
+  }
+  function soundFine(){
+    fine.play();
+  }
+  
+  function isFinished(){
+    if (isPlayer1){
+      if ( parseInt(target1.textContent) ===  parseInt(score1.textContent)) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      if (parseInt(target2.textContent) ===  parseInt(score2.textContent)) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+
+  function plus(){
+    if (!isStarted){
+      return
+    }
+
+    if (isFinished()) {
+      return;
+    }
+
+    run.textContent = String(Number(run.textContent) + 1);
+    soundSuccess();
+    init(); 
+    btnstop.textContent = "❚❚"
+    stop();
+
+    applyscore(1);
+
+    if (isPlayer1){
+      if (0 === parseInt(target1.textContent) - parseInt(score1.textContent)) {
+        soundFine();
+        applyhrun();
+        run.textContent = "0";
+        alert(document.querySelector("#player1").textContent + "님 쿠션 입니다")
+      }
+    } else {
+      if (0 === parseInt(target2.textContent) - parseInt(score2.textContent)) {
+        soundFine();
+        applyhrun();
+        run.textContent = "0";
+        alert(document.querySelector("#player2").textContent + "님 쿠션 입니다")
+      }
+    }
+
+    stop();
+  }
+
+  function minus(){
+    if (!isStarted){
+      return
+    }
+
+    if (isFinished()) {
+      return;
+    }
+
+    run.textContent = String(Number(run.textContent) - 1);
+    soundFail(); 
+
+    applyscore(-1);
+
+    stop();
+  }
+
+  let remainingTime = availTime; // seconds
+  const totalTime   = remainingTime;
+  let progress      = 0;
+
+  function init() {
+    btnstop.textContent = "▶"
+    remainingTime = availTime;
+    countdownEl.textContent = remainingTime;
+    progressBarEl.style.backgroundColor = "#0099ff"
+    progressBarEl.style.width = `${100 - 0}%`;
+    progressBarEl.style.left = `${0}%`;
+  }
+  
+  function timeout() {
+    if (!isStarted || btnstop.textContent === "▶"){
+      return
+    }
+    
+    if (isPlayer1){
+      if (time11.style.display === "none" && time12.style.display === "none" || isTimeout) {
+        return
+      } else {
+        if (time12.style.display === "none") {
+          time11.style.display = "none" 
+        } else {
+          time12.style.display = "none" 
+        }
+      }
+    } else {
+      if (time21.style.display === "none" && time22.style.display === "none" || isTimeout) {
+        return
+      } else {
+        if (time22.style.display === "none") {
+          time21.style.display = "none" 
+        } else {
+          time22.style.display = "none" 
+        }
+      }
+    }
+
+    soundTimeout();
+
+    remainingTime += Number(availTime);
+    progressBarEl.style.color = "#0099ff"
+    isTimeout = true
+  }
+
+  function countdown() {
+    if (remainingTime > 1) {
+      remainingTime--;
+      // update countdown timer
+      countdownEl.textContent = remainingTime;
+
+      // color change
+      if (remainingTime === totalTime / 2) {
+        // countdownEl.style.color = "black"
+      }
+
+      if (remainingTime < 6){
+        progressBarEl.style.backgroundColor = 'red';
+      } else if (remainingTime < 11){
+        progressBarEl.style.backgroundColor = 'orange';
+      } else if (remainingTime < 16) {
+        progressBarEl.style.backgroundColor = 'Green';
+      }
+
+      // update progress bar
+      if (remainingTime > availTime){
+        progress = 0;
+        progressBarEl.style.backgroundColor = '#0099ff';
+      } else {
+        progress = ((totalTime - remainingTime) / totalTime) * 100;
+      }
+
+      progressBarEl.style.width = `${100 - progress}%`;
+      progressBarEl.style.left = `${progress}%`;
+    } else {
+      // countdown finished
+      soundTimeover(); 
+      clearInterval(timerId);
+      init();
+      progressBarEl.style.width = "0%";
+      countdownEl.textContent = "Time's up!";
+    }
+  }
+
+  function turn1(){
+    if (isPlayer1){
+      plus();
+    } else {
+      turn()
+    }
+  }
+  function turn2(){
+    if (!isPlayer1){
+      plus();
+    } else {
+      turn()
+    }
+  }
+
+  function turn(){
+    if (!isStarted){  //} || btnstop.textContent === "❚❚"){
+      return
+    }
+
+    // 타이머 초기화
+    soundTurn();
+    btnstop.textContent = "❚❚"
+    stop();
+    init();
+    isTimeout = false
+
+    // 하이런반영
+    if (!isFinished()){
+      applyhrun();
+     }
+
+     // 이닝 더하기
+    if (!isPlayer1){
+      innings++
+      inning.textContent = `${String(innings)} Inn`
+    }
+    
+    // 포커스 변경
+    if (isPlayer1){
+      // scoreboard1.style.borderWidth = "0";
+      scoreboard1.style.borderColor = "white"
+      scoreboard2.style.borderWidth = "8px";
+      scoreboard2.style.borderColor = "red"
+      run.style.backgroundColor = "yellow"
+      isPlayer1 = false;
+    } else {
+      scoreboard1.style.borderWidth = "8px";
+      scoreboard1.style.borderColor = "red"
+      scoreboard2.style.borderColor = "yellow"
+      // scoreboard2.style.borderWidth = "0";
+      run.style.backgroundColor = "white"
+      isPlayer1 = true;
+    }
+
+    stop();
+
+    run.textContent = "0";
+  }
+
+  function applyscore(val){
+    // 점수반영
+    if (isPlayer1){
+      score1.textContent  = `${String(parseInt(score1.textContent) + val)}` //parseInt(run.textContent)
+      remain1.textContent = `잔 ${String(parseInt(target1.textContent) - parseInt(score1.textContent))}`
+      avg1.textContent    = `Avg ${String((parseInt(score1.textContent) / innings).toFixed(2))}`
+
+      // if (ihrun1 < parseInt(run.textContent)) {
+      //   ihrun1 = parseInt(run.textContent)
+      // }
+      // hrun1.textContent = `HR ${String(ihrun1)}`
+    } else {
+      score2.textContent  = `${String(parseInt(score2.textContent) + val)}` //parseInt(run.textContent)
+      remain2.textContent = `잔 ${String(parseInt(target2.textContent) - parseInt(score2.textContent))}`
+      avg2.textContent    = `Avg ${String((parseInt(score2.textContent) / innings).toFixed(2))}`
+
+      // if (ihrun2 < parseInt(run.textContent)) {
+      //   ihrun2 = parseInt(run.textContent)
+      // }
+      // hrun2.textContent = `HR ${String(ihrun2)}`
+    }
+
+    // run.textContent = "0";
+  }
+
+  function applyhrun(){
+    // 하이런반영
+    if (isPlayer1){
+      if (ihrun1 < parseInt(run.textContent)) {
+        ihrun1 = parseInt(run.textContent)
+      }
+      hrun1.textContent = `HR ${String(ihrun1)}`
+    } else {
+      if (ihrun2 < parseInt(run.textContent)) {
+        ihrun2 = parseInt(run.textContent)
+      }
+      hrun2.textContent = `HR ${String(ihrun2)}`
+    }
+  }
+
+  function stop(){
+    if (btnstop.textContent === "❚❚"){
+      clearInterval(timerId);
+      btnstop.textContent = "▶"
+    } else {
+      if (!isStarted){
+        balloon.style.display = "none" 
+        soundStart();
+        isStarted = true;
+        timerId2 = setInterval(laptime, 1000);
+        scoreboard1.style.borderWidth = "8px";
+        inning.textContent = "1 Inn";
+        buttondisable(false);
+      }
+      countdownEl.textContent = remainingTime;
+      // countdownEl.style.color = "black"
+
+      timerId = setInterval(countdown, 1000);
+      btnstop.textContent = "❚❚"
+    }
+  }
+
+  function laptime() {
+    totalLaptime ++;
+
+    time.textContent = `${String(parseInt(totalLaptime / 60))} Min\n${String(parseInt(totalLaptime % 60))} Sec`
+  }
+
+  function end(){
+    localStorage.clear();
+    history.back();
+  }
+</script>
+</html>

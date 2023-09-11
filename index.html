@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>당구점수판</title>
+</head>
+<script>
+  // window.addEventListener('beforeunload', (event) => {
+  //   // 표준에 따라 기본 동작 방지
+  //   event.preventDefault();
+  //   // Chrome에서는 returnValue 설정이 필요함
+  //   event.returnValue = '';
+  // });
+
+  // //뒤로가기 막기
+  // history.pushState(null, null, location.href);
+  // window.onpopstate = function(event){
+  //   history.go(1);
+  // }
+</script>
+<style>
+  /* @media( orientation: portrait ){
+    html {
+      transform: rotate(-90deg);
+      transform-origin: top left;
+      position: absolute;
+      top: 100%;
+      left: 0%;
+      width: 100vh;
+      height: 100vw;
+    }
+  } */
+  body {
+    background-color: black;
+    font-family: 'Nanum Gothic';
+    -webkit-user-select: none; /* Safari */
+    user-select: none;
+    margin: 10px ;
+  }
+  div {
+    /* width: 100%; */
+    /* text-align: left; */
+    background-color: #444444;
+    padding: 14px;
+    margin: 10px 0;
+    border-radius: 15px;
+  }
+  label {
+    color: white;
+    display: inline-block;
+  }
+  input[type=text] {
+    width: 100%;
+    padding: 10px 16px;
+    margin: 8px 20px 10px 0px ;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  input[type=number] {
+    width: 100%;
+    padding: 10px 16px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  
+  input[type=button] {
+    width: 100%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px;
+    margin: 6px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  input[type=reset] {
+    width: 100%;
+    background-color: #e99e14;
+    color: white;
+    padding: 12px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  input[type=submit]:hover {
+    background-color: #45a049;
+  }
+  
+  /* div {
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    padding: 20px;
+  } */
+  </style>
+  <body>
+  <form>
+    <div>
+      <label for="player1">선수 1</label>
+      <input type="text" id="player1" name="player1" size="20" placeholder="선수 1의 이름">
+      <label for="target1">당구수지</label>
+      <input type="number" id="target1" name="target1"  min="1" max="100" placeholder="선수 1의 당구수지">
+    </div>
+    <div>
+      <label for="player2">선수 2</label>
+      <input type="text" id="player2" name="player2" size="20" placeholder="선수 2의 이름">
+      <label for="target2">당구수지</label>
+      <input type="number" id="target2" name="target2" min="1" max="100" placeholder="선수 2의 당구수지">
+    </div>
+    <div>
+      <label for="limit">시간제한 (초)</label>
+      <input type="number" id="limit" name="limit" min="1" max="40" placeholder="시간제한(초)" value="20">
+    </div>
+    <input type="button" value="시작" id="start">
+    <input type="reset">
+  </form>
+</body>
+<script>
+  const player1   = document.querySelector("#player1");
+  const target1   = document.querySelector("#target1");
+  const player2   = document.querySelector("#player2");
+  const target2   = document.querySelector("#target2");
+  const limit     = document.querySelector("#limit");
+  const startbtn  = document.querySelector("#start");
+  const data      = {};
+
+  startbtn.addEventListener('click',start);
+
+  const validation = () => {
+    if (player1.value === ''){
+      throw '선수 1의 이름을 입력하세요';
+    }
+    if (player2.value === ''){
+      throw '선수 2의 이름을 입력하세요';
+    }
+    if (target1.value === ''){
+      throw '선수 1의 당구수지를 입력하세요';
+    }
+    if (target2.value === ''){
+      throw '선수 2의 당구수지를 입력하세요';
+    }
+    if (limit.value === ''){
+      throw '시간제한을 입력하세요';
+    }
+  }
+
+  function start() {
+    try {
+      validation();
+    } catch (error) {
+      alert(error);
+      return
+    }
+
+    data.player1 = player1.value;
+    data.target1 = target1.value;
+    data.player2 = player2.value;
+    data.target2 = target2.value;
+    data.limit   = limit.value;
+    
+    localStorage.setItem("key", JSON.stringify(data));
+    // console.log(data);
+    location.href = "scoreboard.html"
+  }
+</script>
+</html>
