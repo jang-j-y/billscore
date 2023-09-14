@@ -491,20 +491,21 @@
 
   function getData(){
     // const Url = window.location.hostname === "localhost"  ? 'http//58.141.18.228:8081'  : "api";
-    const Url = 'https://port-0-billman-jvvy2blmekadn6.sel5.cloudtype.app/';  //'http://58.141.18.228:8081/'; //''https://jsonplaceholder.typicode.com/users;
+   const Url = 'https://port-0-billman-jvvy2blmekadn6.sel5.cloudtype.app/';  //'http://58.141.18.228:8081/'; //''https://jsonplaceholder.typicode.com/users;
+    // const Url = 'http://127.0.0.1:8081/idcheck'; //''https://jsonplaceholder.typicode.com/users;
 
     fetch(Url)
           .then(response => response.json())
           .then(data => {player1.textContent = (data[0].name);
-                         display(data[0].NICNAME);
+                         display(data[0].nicname);
                         })
           .catch(error => console.log(error));
   }
 
   function display(data){
-    alert("aaa");
+    alert(data);
   }
-  getData();
+  // getData();
 
   btnplus.addEventListener('click',plus);
   btnminus.addEventListener('click',minus);
