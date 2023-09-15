@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>당구점수판 - 회원가입</title>
+</head>
+<style>
+  body {
+    background-color: rgb(177, 172, 172);
+    font-family: 'Nanum Gothic';
+    -webkit-user-select: none; /* Safari */
+    user-select: none;
+    margin: 10px ;
+  }
+  div {
+    /* width: 100%; */
+    /* text-align: left; */
+    background-color: #444444;
+    padding: 14px;
+    margin: 10px 0;
+    border-radius: 15px;
+  }
+  label {
+    color: white;
+    display: inline-block;
+  }
+  input[type=text] {
+    width: 100%;
+    padding: 10px 16px;
+    margin: 8px 20px 10px 0px ;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  input[type=password] {
+    width: 100%;
+    padding: 10px 16px;
+    margin: 8px 20px 10px 0px ;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  input[type=number] {
+    width: 100%;
+    padding: 10px 16px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  
+  input[type=button] {
+    width: 100%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px;
+    margin: 6px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  input[type=reset] {
+    width: 100%;
+    background-color: #e99e14;
+    color: white;
+    padding: 12px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  input[type=submit]:hover {
+    background-color: #45a049;
+  }
+  
+  input:focus { outline: none !important; border-color: skyblue; box-shadow: 0 0 10px skyblue; }
+  /* div {
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    padding: 20px;
+  } */
+  </style>
+  <body>
+  <form>
+    <div>
+      <label for="id">ID</label>
+      <input type="text" id="id" name="id" size="20" placeholder="아이디">
+      <label for="name">이름</label>
+      <input type="text" id="name" name="name" size="20" placeholder="이름">
+      <label for="nicname">닉네임</label>
+      <input type="text" id="nicname" name="nicname" size="20" placeholder="닉네임">
+      <label for="passwd">비밀번호</label>
+      <input type="password" id="passwd" name="passwd"  size="20" placeholder="비밀번호">
+      <label for="level4">4구수지</label>
+      <input type="number" id="level4" name="level4"  min="1" max="100" placeholder="4구 당구수지">
+      <label for="level3">3구수지</label>
+      <input type="number" id="level3" name="level3"  min="1" max="100" placeholder="3구 당구수지">
+    </div>
+    <input type="button" value="가입" id="register">
+    <input type="reset">
+  </form>
+</body>
+<script>
+  const id          = document.querySelector("#id");
+  const name        = document.querySelector("#name");
+  const nicname     = document.querySelector("#nicname");
+  const passwd      = document.querySelector("#passwd");
+  const level4      = document.querySelector("#level4");
+  const level3      = document.querySelector("#level3");
+  const registerbtn = document.querySelector("#register");
+  const data        = {};
+
+  registerbtn.addEventListener('click',register);
+
+  const validation = () => {
+    if (id.value === ''){
+      throw '아이디를 입력하세요';
+    }
+    if (name.value === ''){
+      throw '이름을 입력하세요';
+    }
+    if (nicname.value === ''){
+      throw '닉네임을 입력하세요';
+    }
+    if (passwd.value === ''){
+      throw '비밀번호를 입력하세요';
+    }
+    if (level4.value === ''){
+      throw '4구 당구수지를 입력하세요';
+    }
+    if (level3.value === ''){
+      throw '3구 당구수지를 입력하세요';
+    }
+  }
+
+  function register() {
+    try {
+      validation();
+    } catch (error) {
+      alert(error);
+      return
+    }
+
+    const userData = {
+          id      : id.value,
+          name    : name.value,
+          nicname : nicname.value,
+          passwd  : passwd.value,
+          level4  : level4.value,
+          level3  : level3.value,
+        };
+console.log(userData);
+
+    fetch("http://127.0.0.1:8081/signin", { //auth 주소에서 받을 예정
+      method: "post", // method :통신방법
+      headers: {      // headers: API 응답에 대한 정보를 담음
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(userData), //userData라는 객체를 보냄
+    })
+      .then((res) => res.json())
+      .then((json) => {
+        if(json.isSuccess==="True"){
+          alert('회원가입이 완료되었습니다!')
+          // props.setMode("LOGIN");
+        }
+        else{
+          alert(json.isSuccess)
+        }
+      });
+    // data.player1 = player1.value;
+    // data.target1 = target1.value;
+    // data.player2 = player2.value;
+    // data.target2 = target2.value;
+    // data.limit   = limit.value;
+    
+    // localStorage.setItem("key", JSON.stringify(data));
+    // // console.log(data);
+    // location.href = "scoreboard.html"
+  }
+</script>
+</html>
+
+<!-- <div class="row">
+  <h4>회원가입</h4>
+</div>
+
+<div class="idForm">
+  <i class="material-icons prefix">account_circle</i>
+  <input type="text" id="id" class="id" name="id" placeholder="ID 4~19 Words"/><br />
+</div>
+
+<div class="row margin emailForm">
+  <i class="material-icons prefix">email</i>
+  <input id="email" name="email" type="text" style="cursor: auto;" class="email" placeholder="Email" />
+</div>
+
+<div class="row margin passForm">
+  <i class="material-icons prefix">vpn_key</i>
+  <input id="password" name="password" type="password" class="pw" placeholder="Password"/>
+</div>
+
+<div class="row margin passForm">
+  <i class="material-icons prefix">vpn_key</i>
+  <input id="password_a" name="cpassword" type="password"class="pw" placeholder="Password Again"/>
+</div>
+
+<div class="row">
+  <button type="button" class="btn" onclick='checkPW();'>회원가입</button>
+  <p class="margin">이미 계정을 갖고 계신가요? <a href="./login">지금 로그인하기</a></p>
+</div> -->
