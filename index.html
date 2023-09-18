@@ -61,7 +61,17 @@
     border-radius: 4px;
     box-sizing: border-box;
   }
-  input[type=number] {
+  input[type=number].cutions {
+    /* width: 100%; */
+    padding: 10px 16px;
+    margin: 8px 0;
+    text-align: center;
+    /* display: block; */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  input[type=number].number {
     width: 100%;
     padding: 10px 16px;
     margin: 8px 0;
@@ -70,7 +80,6 @@
     border-radius: 4px;
     box-sizing: border-box;
   }
-  
   input[type=button] {
     width: 100%;
     background-color: #4CAF50;
@@ -109,17 +118,24 @@
       <label for="player1">선수 1</label>
       <input type="text" id="player1" name="player1" size="20" placeholder="선수 1의 이름">
       <label for="target1">당구수지</label>
-      <input type="number" id="target1" name="target1"  min="1" max="100" placeholder="선수 1의 당구수지">
+      <input type="number" class="number" id="target1" name="target1"  min="1" max="100" placeholder="선수 1의 당구수지">
     </div>
     <div>
       <label for="player2">선수 2</label>
       <input type="text" id="player2" name="player2" size="20" placeholder="선수 2의 이름">
       <label for="target2">당구수지</label>
-      <input type="number" id="target2" name="target2" min="1" max="100" placeholder="선수 2의 당구수지">
+      <input type="number" class="number" id="target2" name="target2" min="1" max="100" placeholder="선수 2의 당구수지">
     </div>
     <div>
+      <input type="radio" id="three" name="gametype" value="3구">
+      <label for="three">3구&nbsp&nbsp</label>
+      <input type="radio" id="four" name="gametype" value="4구" checked>
+      <label for="four">4구&nbsp&nbsp</label>
+      <label for="cutions">쿠션갯수</label>
+      <input type="number" class="cutions" id="cutions" name="cutions" min="1" max="40" placeholder="쿠션갯수" value="1">
+      <br>
       <label for="limit">시간제한 (초)</label>
-      <input type="number" id="limit" name="limit" min="1" max="40" placeholder="시간제한(초)" value="20">
+      <input type="number" class="number" id="limit" name="limit" min="1" max="40" placeholder="시간제한(초)" value="20">
     </div>
     <input type="button" value="시작" id="start">
     <input type="reset">
@@ -130,10 +146,15 @@
   const target1   = document.querySelector("#target1");
   const player2   = document.querySelector("#player2");
   const target2   = document.querySelector("#target2");
+  const three     = document.querySelector("#three");
+  const four      = document.querySelector("#four");
+  const cutions   = document.querySelector("#cutions");
   const limit     = document.querySelector("#limit");
   const startbtn  = document.querySelector("#start");
   const data      = {};
 
+  three.addEventListener('change',gametype);
+  four.addEventListener('change',gametype);
   startbtn.addEventListener('click',start);
 
   const validation = () => {
@@ -162,15 +183,25 @@
       return
     }
 
-    data.player1 = player1.value;
-    data.target1 = target1.value;
-    data.player2 = player2.value;
-    data.target2 = target2.value;
-    data.limit   = limit.value;
+    data.player1  = player1.value;
+    data.target1  = target1.value;
+    data.player2  = player2.value;
+    data.target2  = target2.value;
+    data.gametype = document.querySelector('input[name="gametype"]:checked').value;
+    data.cutions  = cutions.value;
+    data.limit    = limit.value;
     
     localStorage.setItem("key", JSON.stringify(data));
     // console.log(data);
     location.href = "scoreboard.html"
+  }
+
+  function gametype(){
+    if (three.checked){
+      cutions.disabled = true
+    } else {
+      cutions.disabled = false
+    }
   }
 </script>
 </html>
