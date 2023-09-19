@@ -213,27 +213,19 @@
   .score {
     grid-column: 1 / 4;
     font-size: 100px ;
-    /* padding: 5px; */
     font-weight: bold;
-    /* text-align: center; */
     display: flex;
     align-items: center;
     justify-content: center;
-    /* margin-top: -35px;
-    margin-bottom: -25px; */
   }
   .cscore {
     grid-column: 4 / 5;
     font-size: 50px ;
-    color: seagreen;
-    /* padding: 5px; */
+    color: green;
     font-weight: bold;
     display: flex;
     align-items: center;
     justify-content: center;
-    /* display: none; */
-    /* margin-top: -35px;
-    margin-bottom: -25px; */
   }
   .hrun {
     grid-column: 1 / 3;
@@ -253,11 +245,8 @@
     background-color: #4CAF50; /* Green */
     border: none;
     color: white;
-    /* padding: 12px 16px; */
-    /* margin-left: 10px; */
     text-align: center;
     text-decoration: none;
-    /* display: inline-block; */
     font-weight: bolder;
     transition-duration: 0.4s;
     cursor: pointer;
@@ -273,10 +262,6 @@
     border: 2px solid #4CAF50;
     display: none;
   }
-  /* .btnplus:hover {
-    background-color: #4CAF50;
-    color: white;
-  } */
   .btnminus {
     font-size: 30px;
     font-weight: bold;
@@ -289,13 +274,6 @@
     margin: 0px 5px;
     /* float: left;  */
   }
-  /* .btnminus:hover {
-    background-color: #f44336;
-    color: white;
-  } */
-  /* .bspace {
-    display: inline;
-  } */
   .btntime {
     font-size: 30px;
     background-color:gray;
@@ -305,7 +283,6 @@
     border: 4px solid #f7efee;
     border-radius: 50%;
     margin: 0px 0px 0 20px;
-    /* float: left; */
   }
   .btnturn {
     background-color: #008CBA;
@@ -313,28 +290,18 @@
     border: 2px solid #008CBA;
     display: none;
   }
-  /* .btnturn:hover {
-    background-color: #008CBA;
-    color: white;
-  } */
   .btnend {
     background-color: #555555;
     color: white;
     border: 2px solid #555555;
   }
-  /* .btnend:hover {
-    background-color: #555555;
-    color: white;
-  } */
   .progress-bar {
     width: 100%;
     height: 35%;
     background-color: black; /*#f2f2f2;*/
     border-color: gray;
-    /* padding: 50px; */
     margin-top: 21px;
     position: relative;
-    /* float: left;  */
     display: inline-block;
     border-radius: 50px 0 0 50px; /*5%;*/
   }
@@ -345,38 +312,26 @@
     position: absolute;
     top: 0;
     left: 0;
-    /* float: left;  */
     display: inline-block;
     border-radius: 50px 0 0 50px; /*5%;*/
-    /* border-radius: 5%; */
   }
   .countdown {
-    /* display: inline-block; */
     color: white;
     position: relative;
     font-size: 28px;
     font-weight: bold;
-    /* float: left;  */
   }
-  /* .stopbtn {
-    font-size: 20px;
-  } */
   .btnstop {
     position: relative;
     background-color: rgb(64, 217, 228); /* Green */
     border: none;
     color: black;
-    /* padding: 6px 0px 5px; */
     width: 80px;
     height: 80px;
     margin-left: -17px;
     text-align: center;
-    /* text-decoration: none; */
-    /* display: inline-block; */
     font-size: 26px;
     font-weight: bolder;
-    /* margin: 0px 0px; */
-    /* transition-duration: 0.4s; */
     border-radius: 50%;
     float: left;
     cursor: pointer;
@@ -390,8 +345,6 @@
     background:pink; 
     border-radius: 10px;
     font-size: 20px;
-    /* border-style: solid; *
-    /* border-color:black; */
   }
   .balloon:after { 
     border-style: solid;
@@ -470,7 +423,7 @@
   let   innings       = 1;
   let   ihrun1        = 0;
   let   ihrun2        = 0;
-  // console.log(data.limit);
+
   const availTime     = data.limit;
   const time          = document.querySelector(".time");
   const inning        = document.querySelector(".inning");
@@ -480,6 +433,8 @@
   const player2       = document.querySelector("#player2");
   const score1        = document.querySelector("#score1");
   const score2        = document.querySelector("#score2");
+  const cscore1       = document.querySelector("#cscore1");
+  const cscore2       = document.querySelector("#cscore2");
   const target1       = document.querySelector("#target1");
   const target2       = document.querySelector("#target2");
   const remain1       = document.querySelector("#remain1");
@@ -506,6 +461,11 @@
   target2.textContent = data.target2;
   remain1.textContent = `잔 ${String(parseInt(target1.textContent))}`
   remain2.textContent = `잔 ${String(parseInt(target2.textContent))}`
+
+  score1.style.gridColumn = "1/5";
+  cscore1.style.display = "none";
+  score2.style.gridColumn = "1/5";
+  cscore2.style.display = "none";
 
   function getData(params){
     // const Url = window.location.hostname === "localhost"  ? 'http//58.141.18.228:8081'  : "api";
@@ -579,7 +539,7 @@ console.log(Url);
     fine.play();
   }
   
-  function isFinished(){
+  function isFinished(){  // 알다마 다 쳤는지
     if (isPlayer1){
       if ( parseInt(target1.textContent) ===  parseInt(score1.textContent)) {
         return true;
@@ -595,12 +555,36 @@ console.log(Url);
     }
   }
 
+  function is3CFinished(){  // 쿠션 다 쳤는지
+    if (data.gametype === "3구") {
+      return true
+    }
+
+    if (isPlayer1){
+      if ( parseInt(data.cutions) ===  parseInt(cscore1.textContent)) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      if (parseInt(data.cutions) ===  parseInt(cscore2.textContent)) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+
   function plus(){
     if (!isStarted){
       return
     }
 
     if (isFinished()) {
+      if (!is3CFinished()) {
+        Cplus();
+      }
+
       return;
     }
 
@@ -617,15 +601,63 @@ console.log(Url);
         soundFine();
         applyhrun();
         run.textContent = "0";
-        alert(document.querySelector("#player1").textContent + "님 쿠션 입니다")
+        score1.style.gridColumn = "1/2";
+        score1.style.fontSize = "50px";
+        cscore1.style.gridColumn = "2/5";
+        cscore1.style.display = "flex";
+        cscore1.style.fontSize = "100px";
+
+        if (data.gametype === "3구") {
+          alert(document.querySelector("#player1").textContent + "님 승리하셨습니다")
+          return
+        } else {
+          alert(document.querySelector("#player1").textContent + "님 쿠션 입니다")
+        }
       }
     } else {
       if (0 === parseInt(target2.textContent) - parseInt(score2.textContent)) {
         soundFine();
         applyhrun();
         run.textContent = "0";
-        alert(document.querySelector("#player2").textContent + "님 쿠션 입니다")
+        score2.style.gridColumn = "1/2";
+        score2.style.fontSize = "50px";
+        cscore2.style.gridColumn = "2/5";
+        cscore2.style.display = "flex";
+        cscore2.style.fontSize = "100px";
+        if (data.gametype === "3구") {
+          alert(document.querySelector("#player2").textContent + "님 승리하셨습니다")
+          return
+        } else {
+          alert(document.querySelector("#player2").textContent + "님 쿠션 입니다")
+        }
       }
+    }
+
+    stop();
+  }
+
+  function Cplus(){
+    run.textContent = String(Number(run.textContent) + 1);
+    soundSuccess();
+    init(); 
+    btnstop.textContent = "❚❚"
+    stop();
+
+    if (isPlayer1){
+      cscore1.textContent  = `${String(parseInt(cscore1.textContent) + 1)}` //parseInt(run.textContent)
+    } else {
+      cscore2.textContent  = `${String(parseInt(cscore1.textContent) + 1)}` //parseInt(run.textContent)
+    }
+
+    if (is3CFinished()) {
+      soundFine();
+      if (isPlayer1){
+        alert(document.querySelector("#player1").textContent + "님 승리하셨습니다")
+      } else {
+        alert(document.querySelector("#player2").textContent + "님 승리하셨습니다")
+      }
+
+      return;
     }
 
     stop();
@@ -800,23 +832,11 @@ console.log(Url);
       score1.textContent  = `${String(parseInt(score1.textContent) + val)}` //parseInt(run.textContent)
       remain1.textContent = `잔 ${String(parseInt(target1.textContent) - parseInt(score1.textContent))}`
       avg1.textContent    = `Av ${String((parseInt(score1.textContent) / innings).toFixed(1))}`
-
-      // if (ihrun1 < parseInt(run.textContent)) {
-      //   ihrun1 = parseInt(run.textContent)
-      // }
-      // hrun1.textContent = `HR ${String(ihrun1)}`
     } else {
       score2.textContent  = `${String(parseInt(score2.textContent) + val)}` //parseInt(run.textContent)
       remain2.textContent = `잔 ${String(parseInt(target2.textContent) - parseInt(score2.textContent))}`
       avg2.textContent    = `Av ${String((parseInt(score2.textContent) / innings).toFixed(1))}`
-
-      // if (ihrun2 < parseInt(run.textContent)) {
-      //   ihrun2 = parseInt(run.textContent)
-      // }
-      // hrun2.textContent = `HR ${String(ihrun2)}`
     }
-
-    // run.textContent = "0";
   }
 
   function applyhrun(){
