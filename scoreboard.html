@@ -560,19 +560,24 @@ console.log(Url);
       return true
     }
 
-    if (isPlayer1){
-      if ( parseInt(data.cutions) ===  parseInt(cscore1.textContent)) {
-        return true;
-      } else {
-        return false;
-      }
+    if ( parseInt(data.cutions) ===  parseInt(cscore1.textContent) || parseInt(data.cutions) ===  parseInt(cscore2.textContent)) {
+      return true;
     } else {
-      if (parseInt(data.cutions) ===  parseInt(cscore2.textContent)) {
-        return true;
-      } else {
-        return false;
-      }
+      return false;
     }
+    // if (isPlayer1){
+    //   if ( parseInt(data.cutions) ===  parseInt(cscore1.textContent)) {
+    //     return true;
+    //   } else {
+    //     return false;
+    //   }
+    // } else {
+    //   if (parseInt(data.cutions) ===  parseInt(cscore2.textContent)) {
+    //     return true;
+    //   } else {
+    //     return false;
+    //   }
+    // }
   }
 
   function plus(){
@@ -601,16 +606,16 @@ console.log(Url);
         soundFine();
         applyhrun();
         run.textContent = "0";
-        score1.style.gridColumn = "1/2";
-        score1.style.fontSize = "50px";
-        cscore1.style.gridColumn = "2/5";
-        cscore1.style.display = "flex";
-        cscore1.style.fontSize = "100px";
 
         if (data.gametype === "3구") {
           alert(document.querySelector("#player1").textContent + "님 승리하셨습니다")
           return
         } else {
+          score1.style.gridColumn = "1/2";
+          score1.style.fontSize = "50px";
+          cscore1.style.gridColumn = "2/5";
+          cscore1.style.display = "flex";
+          cscore1.style.fontSize = "100px";
           alert(document.querySelector("#player1").textContent + "님 쿠션 입니다")
         }
       }
@@ -619,15 +624,15 @@ console.log(Url);
         soundFine();
         applyhrun();
         run.textContent = "0";
-        score2.style.gridColumn = "1/2";
-        score2.style.fontSize = "50px";
-        cscore2.style.gridColumn = "2/5";
-        cscore2.style.display = "flex";
-        cscore2.style.fontSize = "100px";
         if (data.gametype === "3구") {
           alert(document.querySelector("#player2").textContent + "님 승리하셨습니다")
           return
         } else {
+          score2.style.gridColumn = "1/2";
+          score2.style.fontSize = "50px";
+          cscore2.style.gridColumn = "2/5";
+          cscore2.style.display = "flex";
+          cscore2.style.fontSize = "100px";
           alert(document.querySelector("#player2").textContent + "님 쿠션 입니다")
         }
       }
@@ -650,6 +655,7 @@ console.log(Url);
     }
 
     if (is3CFinished()) {
+      run.textContent = "0";
       soundFine();
       if (isPlayer1){
         alert(document.querySelector("#player1").textContent + "님 승리하셨습니다")
@@ -786,6 +792,10 @@ console.log(Url);
       return
     }
 
+    if (is3CFinished){
+      return
+    }
+    
     // 타이머 초기화
     soundTurn();
     btnstop.textContent = "❚❚"
