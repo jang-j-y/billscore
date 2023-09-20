@@ -9,13 +9,20 @@
   <title>당구점수판</title>
 </head>
 <script>
-  window.addEventListener('beforeunload', (event) => {
-    // 표준에 따라 기본 동작 방지
+  const listener = (event) => {
     event.preventDefault();
-    // Chrome에서는 returnValue 설정이 필요함
+      // Chrome에서는 returnValue 설정이 필요함
     event.returnValue = '';
-  });
+  }
 
+  function banRefresh(){
+    window.addEventListener('beforeunload', listener)
+  }
+  function offbanRefresh(){
+    window.removeEventListener('beforeunload', listener)
+  }
+
+  banRefresh();
   // //뒤로가기 막기
   // history.pushState(null, null, location.href);
   // window.onpopstate = function(event){
@@ -37,7 +44,7 @@
   // // scroll를 제어 하는 코드
   // setTimeout(scrollTo, 0, 0, 1);}, false);    
   const data = JSON.parse(localStorage.getItem("key"));         //setItem("key", JSON.stringify(data));
-  console.log(data);
+  // console.log(data);
 
 </script>
 <style>
@@ -403,7 +410,7 @@
       <div class="countdown"></div>
     </div>
     <div class="stopbtn">
-      <button class="btnstop">▶</button>
+      <button class="btnstop">startMark</button>
       <div class="balloon" id="balloon">버튼을 클릭하여 시작하세요</div>
     </div>
   </div>
@@ -424,6 +431,9 @@
   let   ihrun1        = 0;
   let   ihrun2        = 0;
 
+  const pauseMark     = "❚❚"
+  const startMark     = "▶"
+  
   const availTime     = data.limit;
   const time          = document.querySelector(".time");
   const inning        = document.querySelector(".inning");
@@ -461,6 +471,7 @@
   target2.textContent = data.target2;
   remain1.textContent = `잔 ${String(parseInt(target1.textContent))}`
   remain2.textContent = `잔 ${String(parseInt(target2.textContent))}`
+  btnstop.textContent = startMark;
 
   score1.style.gridColumn = "1/5";
   cscore1.style.display = "none";
@@ -556,28 +567,15 @@ console.log(Url);
   }
 
   function is3CFinished(){  // 쿠션 다 쳤는지
-    if (data.gametype === "3구") {
-      return true
-    }
+    // if (data.gametype === "3구") {
+    //   return true
+    // }
 
     if ( parseInt(data.cutions) ===  parseInt(cscore1.textContent) || parseInt(data.cutions) ===  parseInt(cscore2.textContent)) {
       return true;
     } else {
       return false;
     }
-    // if (isPlayer1){
-    //   if ( parseInt(data.cutions) ===  parseInt(cscore1.textContent)) {
-    //     return true;
-    //   } else {
-    //     return false;
-    //   }
-    // } else {
-    //   if (parseInt(data.cutions) ===  parseInt(cscore2.textContent)) {
-    //     return true;
-    //   } else {
-    //     return false;
-    //   }
-    // }
   }
 
   function plus(){
@@ -596,7 +594,7 @@ console.log(Url);
     run.textContent = String(Number(run.textContent) + 1);
     soundSuccess();
     init(); 
-    btnstop.textContent = "❚❚"
+    btnstop.textContent = pauseMark
     stop();
 
     applyscore(1);
@@ -608,7 +606,7 @@ console.log(Url);
         run.textContent = "0";
 
         if (data.gametype === "3구") {
-          alert(document.querySelector("#player1").textContent + "님 승리하셨습니다")
+          winMsg(document.querySelector("#player1").textContent)
           return
         } else {
           score1.style.gridColumn = "1/2";
@@ -625,7 +623,7 @@ console.log(Url);
         applyhrun();
         run.textContent = "0";
         if (data.gametype === "3구") {
-          alert(document.querySelector("#player2").textContent + "님 승리하셨습니다")
+          winMsg(document.querySelector("#player2").textContent)
           return
         } else {
           score2.style.gridColumn = "1/2";
@@ -645,7 +643,7 @@ console.log(Url);
     run.textContent = String(Number(run.textContent) + 1);
     soundSuccess();
     init(); 
-    btnstop.textContent = "❚❚"
+    btnstop.textContent = pauseMark
     stop();
 
     if (isPlayer1){
@@ -658,15 +656,20 @@ console.log(Url);
       run.textContent = "0";
       soundFine();
       if (isPlayer1){
-        alert(document.querySelector("#player1").textContent + "님 승리하셨습니다")
+        winMsg(document.querySelector("#player1").textContent)
       } else {
-        alert(document.querySelector("#player2").textContent + "님 승리하셨습니다")
+        winMsg(document.querySelector("#player2").textContent)
       }
 
       return;
     }
 
     stop();
+  }
+
+  function winMsg(player){
+    alert(player + "님 승리하셨습니다");
+    btnstop.textContent = "한판더"
   }
 
   function minus(){
@@ -691,7 +694,7 @@ console.log(Url);
   let progress      = 0;
 
   function init() {
-    btnstop.textContent = "▶"
+    btnstop.textContent = startMark
     remainingTime = availTime;
     countdownEl.textContent = remainingTime;
     progressBarEl.style.backgroundColor = "#0099ff"
@@ -700,7 +703,7 @@ console.log(Url);
   }
   
   function timeout() {
-    if (!isStarted || btnstop.textContent === "▶"){
+    if (!isStarted || btnstop.textContent != pauseMark){
       return
     }
     
@@ -788,13 +791,18 @@ console.log(Url);
   }
 
   function turn(){
-    if (!isStarted){  //} || btnstop.textContent === "❚❚"){
+    if (!isStarted){  //} || btnstop.textContent === pauseMark){
+      return
+    }
+
+    if ((data.gametype === "3구" && isFinished()) || (data.gametype === "4구" && is3CFinished())){
+    // if (isFinished() && is3CFinished()){
       return
     }
 
     // 타이머 초기화
     soundTurn();
-    btnstop.textContent = "❚❚"
+    btnstop.textContent = pauseMark
     stop();
     init();
     isTimeout = false
@@ -861,9 +869,15 @@ console.log(Url);
   }
 
   function stop(){
-    if (btnstop.textContent === "❚❚"){
+    if (btnstop.textContent === "한판더"){
+      offbanRefresh();
+      window.location.reload();
+      banRefresh();
+      return
+    }
+    if (btnstop.textContent === pauseMark){
       clearInterval(timerId);
-      btnstop.textContent = "▶"
+      btnstop.textContent = startMark
     } else {
       if (!isStarted){
         balloon.style.display = "none" 
@@ -878,7 +892,7 @@ console.log(Url);
       // countdownEl.style.color = "black"
 
       timerId = setInterval(countdown, 1000);
-      btnstop.textContent = "❚❚"
+      btnstop.textContent = pauseMark
     }
   }
 

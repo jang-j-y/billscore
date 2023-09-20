@@ -191,6 +191,10 @@
     data.cutions  = cutions.value;
     data.limit    = limit.value;
     
+    if (data.gametype === "3구"){
+      data.cutions  = "0"
+    }
+
     localStorage.setItem("key", JSON.stringify(data));
     // console.log(data);
     location.href = "scoreboard.html"
