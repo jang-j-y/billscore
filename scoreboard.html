@@ -436,6 +436,7 @@
   
   const availTime     = data.limit;
   const body          = document.querySelector("body");
+  const balloon       = document.querySelector("#balloon");
   const time          = document.querySelector(".time");
   const inning        = document.querySelector(".inning");
   const scoreboard1   = document.querySelector(".scoreboard1");
@@ -514,25 +515,38 @@ console.log(Url);
     btnturn.disabled    = b;
   }
   
+  speak(balloon.textContent);
+
   function soundStart(){
     const start     = new Audio('./audio/start.mp3');
     start.play();
   }
   function soundSuccess(){
-    const success   = new Audio('./audio/success.mp3');
-    success.play();
+    // const success   = new Audio('./audio/success.mp3');
+    // success.play();
+    speak(run.textContent + '점');
   }
   function soundFail(){
-    const fail      = new Audio('./audio/fail.mp3');
-    fail.play();
+    // const fail      = new Audio('./audio/fail.mp3');
+    // fail.play();
+    speak('마이너스1점');
   }
   function soundTimeout(){
     const timeouts  = new Audio('./audio/timeout.mp3');
     timeouts.play();
   }
   function soundTurn(){
-    const turnover  = new Audio('./audio/turn.mp3');
-    turnover.play();
+    // const turnover  = new Audio('./audio/turn.mp3');
+    // turnover.play();
+    let playername;
+
+    if (isPlayer1){
+      playername = player2.textContent;
+    } else {
+      playername = player1.textContent;
+    }
+
+    speak(playername + '님 차례입니다')
   }
   function soundTimeover(){
     const timeover  = new Audio('./audio/timeover.mp3');
@@ -585,8 +599,8 @@ console.log(Url);
       return;
     }
 
-    soundSuccess();
     run.textContent = String(Number(run.textContent) + 1);
+    soundSuccess();
     init(); 
     btnstop.textContent = pauseMark
     stop();
@@ -596,20 +610,20 @@ console.log(Url);
     if (isPlayer1){
       if (0 === parseInt(target1.textContent) - parseInt(score1.textContent)) {
         applyhrun();
-        run.textContent = "0";
         soundFine().then(function(res){
           if (data.gametype === "3구") {
             winMsg(document.querySelector("#player1").textContent)
             body.style.pointerEvents = "auto";
             return
           } else {
+            run.textContent = "0";
             score1.style.gridColumn = "1/2";
             score1.style.fontSize = "50px";
             cscore1.style.gridColumn = "2/5";
             cscore1.style.display = "flex";
             cscore1.style.fontSize = "100px";
             console.log(res.returnValue);
-            alert(document.querySelector("#player1").textContent + "님 쿠션 입니다")
+            speak(document.querySelector("#player1").textContent + "님 쿠션입니다")
             body.style.pointerEvents = "auto";
 
             stop();
@@ -619,19 +633,19 @@ console.log(Url);
     } else {
       if (0 === parseInt(target2.textContent) - parseInt(score2.textContent)) {
         applyhrun();
-        run.textContent = "0";
         soundFine().then(function(res){
           if (data.gametype === "3구") {
             winMsg(document.querySelector("#player2").textContent)
             body.style.pointerEvents = "auto";
             return
           } else {
+            run.textContent = "0";
             score2.style.gridColumn = "1/2";
             score2.style.fontSize = "50px";
             cscore2.style.gridColumn = "2/5";
             cscore2.style.display = "flex";
             cscore2.style.fontSize = "100px";
-            alert(document.querySelector("#player2").textContent + "님 쿠션 입니다")
+            speak(document.querySelector("#player2").textContent + "님 쿠션입니다")
             body.style.pointerEvents = "auto";
 
             stop();
@@ -642,8 +656,8 @@ console.log(Url);
   }
 
   function Cplus(){
-    soundSuccess();
     run.textContent = String(Number(run.textContent) + 1);
+    soundSuccess();
     init(); 
     btnstop.textContent = pauseMark
     stop();
@@ -655,7 +669,7 @@ console.log(Url);
     }
 
     if (is3CFinished()) {
-      run.textContent = "0";
+      // run.textContent = "0";
       soundFine().then(function(res){
         if (isPlayer1){
           winMsg(document.querySelector("#player1").textContent)
@@ -673,7 +687,7 @@ console.log(Url);
   }
 
   function winMsg(player){
-    alert(player + "님 승리하셨습니다");
+    speak(player + "님 승리하셨습니다");
     btnstop.textContent = "한판더"
   }
 
@@ -911,5 +925,39 @@ console.log(Url);
     localStorage.clear();
     history.back();
   }
+
+  function speak(text, opt_prop) {
+		if (typeof SpeechSynthesisUtterance === "undefined" || typeof window.speechSynthesis === "undefined") {
+			alert("이 브라우저는 음성 합성을 지원하지 않습니다.")
+			return
+		}
+
+		window.speechSynthesis.cancel() // 현재 읽고있다면 초기화
+
+		const prop = opt_prop || {}
+
+		const speechMsg = new SpeechSynthesisUtterance()
+		speechMsg.rate = prop.rate || 1 // 속도: 0.1 ~ 10      
+		speechMsg.pitch = prop.pitch || 1 // 음높이: 0 ~ 2
+		speechMsg.lang = prop.lang || "ko-KR"
+		speechMsg.text = text
+
+		// SpeechSynthesisUtterance에 저장된 내용을 바탕으로 음성합성 실행
+		window.speechSynthesis.speak(speechMsg)
+	}
+
+
+	// // 이벤트 영역
+	// const selectLang = document.getElementById("select-lang")
+	// const text = document.getElementById("text")
+	// const btnRead = document.getElementById("btn-read")
+
+	// btnRead.addEventListener("click", e => {
+	// 	speak(text.value, {
+	// 		rate: 1,
+	// 		pitch: 1.2,
+	// 		lang: selectLang.options[selectLang.selectedIndex].value
+	// 	})
+	// })
 </script>
 </html>
