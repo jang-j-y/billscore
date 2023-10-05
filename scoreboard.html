@@ -424,6 +424,7 @@
   let   isStarted     = false;
   let   isPlayer1     = true;
   let   isTimeout     = false
+  let   isTtsAvailable = true;
   let   timerId;
   let   timerId2;
   let   totalLaptime  = 0;
@@ -515,7 +516,15 @@ console.log(Url);
     btnturn.disabled    = b;
   }
   
-  speak(balloon.textContent);
+  if (typeof SpeechSynthesisUtterance === "undefined" || typeof window.speechSynthesis === "undefined") {
+			// alert("이 브라우저는 음성 합성을 지원하지 않습니다.")
+      isTtsAvailable = false;
+			// return
+	}
+
+  if (isTtsAvailable){
+    speak(balloon.textContent);
+  }
 
   function soundStart(){
     const start     = new Audio('./audio/start.mp3');
@@ -935,15 +944,7 @@ console.log(Url);
     history.back();
   }
 
-  let isTtsAvailable = true;
-
   function speak(text, opt_prop) {
-		if (typeof SpeechSynthesisUtterance === "undefined" || typeof window.speechSynthesis === "undefined") {
-			// alert("이 브라우저는 음성 합성을 지원하지 않습니다.")
-      isTtsAvailable = false;
-			return
-		}
-
 		window.speechSynthesis.cancel() // 현재 읽고있다면 초기화
 
 		const prop = opt_prop || {}
