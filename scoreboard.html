@@ -522,31 +522,40 @@ console.log(Url);
     start.play();
   }
   function soundSuccess(){
-    // const success   = new Audio('./audio/success.mp3');
-    // success.play();
-    speak(run.textContent + '점');
+    if (isTtsAvailable){
+      speak(run.textContent + '점');
+    } else {
+      const success   = new Audio('./audio/success.mp3');
+      success.play();
+    }
   }
   function soundFail(){
-    // const fail      = new Audio('./audio/fail.mp3');
-    // fail.play();
-    speak('마이너스1점');
+    if (isTtsAvailable){
+      speak('마이너스1점');
+    } else {
+      const fail      = new Audio('./audio/fail.mp3');
+      fail.play();
+    }
   }
   function soundTimeout(){
     const timeouts  = new Audio('./audio/timeout.mp3');
     timeouts.play();
   }
   function soundTurn(){
-    // const turnover  = new Audio('./audio/turn.mp3');
-    // turnover.play();
-    let playername;
+    if (isTtsAvailable){
+      let playername;
 
-    if (isPlayer1){
-      playername = player2.textContent;
+      if (isPlayer1){
+        playername = player2.textContent;
+      } else {
+        playername = player1.textContent;
+      }
+
+      speak(playername + '님 차례입니다')
     } else {
-      playername = player1.textContent;
+      const turnover  = new Audio('./audio/turn.mp3');
+      turnover.play();
     }
-
-    speak(playername + '님 차례입니다')
   }
   function soundTimeover(){
     const timeover  = new Audio('./audio/timeover.mp3');
@@ -926,9 +935,12 @@ console.log(Url);
     history.back();
   }
 
+  let isTtsAvailable = true;
+
   function speak(text, opt_prop) {
 		if (typeof SpeechSynthesisUtterance === "undefined" || typeof window.speechSynthesis === "undefined") {
-			alert("이 브라우저는 음성 합성을 지원하지 않습니다.")
+			// alert("이 브라우저는 음성 합성을 지원하지 않습니다.")
+      isTtsAvailable = false;
 			return
 		}
 
