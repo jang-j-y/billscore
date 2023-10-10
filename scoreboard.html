@@ -431,6 +431,7 @@
   let   innings       = 1;
   let   ihrun1        = 0;
   let   ihrun2        = 0;
+  const resultData    = {};
 
   const pauseMark     = "❚❚"
   const startMark     = "▶"
@@ -477,9 +478,14 @@
   btnstop.textContent = startMark;
 
   score1.style.gridColumn = "1/5";
-  cscore1.style.display = "none";
+  cscore1.style.display   = "none";
   score2.style.gridColumn = "1/5";
-  cscore2.style.display = "none";
+  cscore2.style.display   = "none";
+
+  resultData.player1 = data.player1;
+  resultData.player2 = data.player2
+  resultData.target1 = data.target1;
+  resultData.target2 = data.target2;
 
   function getData(params){
     // const Url = window.location.hostname === "localhost"  ? 'http//58.141.18.228:8081'  : "api";
@@ -641,6 +647,7 @@ console.log(Url);
             cscore1.style.display = "flex";
             cscore1.style.fontSize = "100px";
             console.log(res.returnValue);
+            recordScore();
             speak(document.querySelector("#player1").textContent + "님 쿠션입니다")
             body.style.pointerEvents = "auto";
 
@@ -663,6 +670,7 @@ console.log(Url);
             cscore2.style.gridColumn = "2/5";
             cscore2.style.display = "flex";
             cscore2.style.fontSize = "100px";
+            recordScore();
             speak(document.querySelector("#player2").textContent + "님 쿠션입니다")
             body.style.pointerEvents = "auto";
 
@@ -704,9 +712,32 @@ console.log(Url);
     stop();
   }
 
+  function recordScore(){
+    if (isPlayer1){
+        resultData.inn41      = innings;
+        resultData.laptime41  = totalLaptime;
+    } else {
+        resultData.inn42      = innings;
+        resultData.laptime42  = totalLaptime;
+    }
+  }
+
+  function recordScore2(){
+    if (isPlayer1){
+        resultData.inn31      = innings - resultData.inn41;
+        resultData.laptime31  = totalLaptime - resultData.laptime41;
+    } else {
+        resultData.inn32      = innings - resultData.inn42;
+        resultData.laptime42  = totalLaptime - resultData.laptime42;
+    }
+  }
+
   function winMsg(player){
+    clearInterval(timerId2);
+    recordScore2();
     speak(player + "님 승리하셨습니다");
     btnstop.textContent = "한판더"
+    localStorage.setItem("result", JSON.stringify(resultData));
   }
 
   function minus(){
@@ -945,6 +976,11 @@ console.log(Url);
   }
 
   function speak(text, opt_prop) {
+    if (!isTtsAvailable){
+      alert(text);
+      return;
+    }
+    
 		window.speechSynthesis.cancel() // 현재 읽고있다면 초기화
 
 		const prop = opt_prop || {}
