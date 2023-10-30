@@ -384,7 +384,7 @@
     <div class="time">0 Min<br>0 Sec</div>
     <div class="inning">0 Inn</div>
     <div class="runbox">
-      <button class="run">0</button>
+      <button class="run" id="run">0</button>
     </div>
     <div class="board2">
       <div class="scoreboard2">
@@ -937,6 +937,8 @@ console.log(Url);
   }
 
   function stop(){
+    document.getElementById("run").focus();
+
     if (btnstop.textContent === "한판더"){
       offbanRefresh();
       window.location.reload();
@@ -995,7 +997,22 @@ console.log(Url);
 		window.speechSynthesis.speak(speechMsg)
 	}
 
+  document.addEventListener('keydown', (event) => {
+    // console.log("event.key = " + event.key + "  " + "event.code = " + event.code);
+    if (event.key === "Enter"){
+      toggleFullScreen()
+    }
+  });
 
+  function toggleFullScreen() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen()
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen()
+      }
+    }
+  }
 	// // 이벤트 영역
 	// const selectLang = document.getElementById("select-lang")
 	// const text = document.getElementById("text")
